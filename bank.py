@@ -1,3 +1,5 @@
+import textwrap
+
 def menu(): 
     menu = """
 
@@ -8,18 +10,17 @@ def menu():
    Pressione a tecla referente 
    à ação que deseja realizar:
 
-    [d] Depositar
-    [s] Sacar
-    [e] Extrato
-    [n] Abrir conta
-    [c] Fechar conta
-    [l] Listar contas
-    [u] Novo usuário
-    [q] Sair
+    [d]\tDepositar
+    [s]\tSacar
+    [e]\tExtrato
+    [n]\tAbrir conta
+    [l]\tListar contas
+    [u]\tNovo usuário
+    [q]\tSair
 
 > """
 
-    return input(menu)
+    return input(textwrap.dedent(menu))
 
 def  depositar(saldo, valor, extrato, /):
 
@@ -29,7 +30,7 @@ def  depositar(saldo, valor, extrato, /):
         print("\nDepósito realizado com sucesso! \nO valor já encontra-se em sua conta.")
             
      else:
-        print("A operação falhou! O valor informado é inválido.")
+        print("\nA operação falhou! O valor informado é inválido.")
 
      return saldo, extrato
 
@@ -40,7 +41,7 @@ def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
         excedeu_limite = valor > limite
         excedeu_saques = numero_saques >= limite_saques
         
-        
+
         
         if excedeu_saldo:
             print("\nA operação falhou! Não há saldo suficiente.")
@@ -54,7 +55,7 @@ def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
         elif valor > 0:
               
               saldo -= valor
-              extrato += f"Saque: R$ {valor:.2f}\n"
+              extrato += f"Saque:\t\tR$ {valor:.2f}\n"
               numero_saques += 1
               print(f"Saque realizado com sucesso!\nPor favor, retire o seu dinheiro.") 
         
@@ -78,8 +79,10 @@ def criar_usuario(usuarios):
       if usuario:
             print("\n Esse CPF já está em utilização!")
             return
+      
+
       nome = input("\nInforme o seu nome completo: ")
-      data_nascimento = input("\n Informe a sua data de nascimento (dd-mm-aaaa): ")
+      data_nascimento = input("\nInforme a sua data de nascimento (dd-mm-aaaa): ")
       endereco = input("\nInforme o seu endereço seguindo os requisitos: (logradouro, num - bairro - cidade/sigla do estado): ")
 
       usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
@@ -88,36 +91,28 @@ def criar_usuario(usuarios):
 
 def filtrar_usuario(cpf, usuarios):
       usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
-
+        
       return usuarios_filtrados[0] if usuarios_filtrados else None
 
 def criar_conta(agencia, numero_conta, usuarios):
-      cpf = input("\nPor favor, informe o seu CPF: ")
+      cpf = input("Por favor, informe o seu CPF: ")
       usuario = filtrar_usuario(cpf, usuarios)
 
       if usuario:
             print("\nA sua conta foi criada com sucesso! ")
             return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
 
-            print("\nUsuário não encontrado, o processo de criação de conta foi interrompido.")
-
-def excluir_conta(agencia, numero_conta, usuarios):
-      cpf = input("\nPor favor, informe o seu CPF: ")
-      usuario = filtrar_usuario(cpf, usuarios)
-
-      if usuario:
-            print("\nO processo de fechamento da sua conta foi concluído. ")
-            return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
-
+      print("\nUsuário não encontrado, o processo de criação de conta foi interrompido.")
 
 def listar_contas(contas):
       for conta in contas:
             linha = f"""\
-                Agência:\t{conta["agencia"]}
-                C/C:\t\t{conta["numero_conta"]}
-                Titular:\t{conta["usuario"]["nome"]}
+                Agência:\t{conta['agencia']}
+                C/C:\t\t{conta['numero_conta']}
+                Titular:\t{conta['usuario']['nome']}
                 """
             print("=" * 100)
+            print(textwrap.dedent(linha))
 
 def main():
 
@@ -166,15 +161,7 @@ def main():
               conta = criar_conta(AGENCIA, numero_conta, usuarios)
 
               if conta:
-                    contas.append(conta)
-
-        elif opcao == "c":
-              numero_conta = len(contas) - 1
-              conta = excluir_conta(AGENCIA, numero_conta, usuarios)
-
-              if conta:
-                    contas.remove(conta)
-                    print("Lamentamos que tenha fechado a sua conta... Mas agradecemos seu tempo conosco!")
+                    contas.append(conta)                    
         
         elif opcao == "l":
               listar_contas(contas)
@@ -184,3 +171,5 @@ def main():
 
         else: 
             print("Operação inválida, por favor tente novamente selecionando a opção desejada.")
+
+main()
